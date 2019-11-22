@@ -5,7 +5,9 @@ suppressMessages(library(tidyquant))
 suppressMessages(library(quantmod))
 suppressMessages(library(tibbletime))
 suppressMessages(library(timetk))
-#qsuppressMessages(library(tibble))
+suppressMessages(library(highcharter))
+suppressMessages(library(scales))
+library(htmlwidgets)
 options(warn=-1, message=-1)
 args=commandArgs(trailingOnly=T)
 
@@ -203,8 +205,15 @@ Return_port_tq%>%
 					mutate(Stdev=100*Stdev)
 					
 
+ht<-highchart(type='stock')%>%
+	hc_add_series(Return_port_xts)
 
-
-
+saveWidget(ht,file='chart.html', selfcontained=F)
+Return_port_tidy%>%
+	ggplot(aes(x=date, y=returns))+
+	geom_point(color="cornflowerblue")+
+	scale_x_date(breaks=pretty_breaks(n=6))+
+	ggtitle('returns')+
+	theme(plot.title=element_text(hjust=0.5))	
 
 }

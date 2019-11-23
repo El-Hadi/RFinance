@@ -3,9 +3,9 @@ library(readxl)
 library(dygraphs)
 library(car)
 
+#mettre un repertoire de donnees et projets
 
-
-macro <- read_excel("./Téléchargements/macro.xls")
+macro <- read_excel("./raw_data/macro.xls")
 
 macro<-macro %>% 
   mutate(dspread=c(NA, 100*diff(log(BMINUSA))),
@@ -24,3 +24,8 @@ macro<-macro %>%
 lm_msoft <- lm(ermsoft~ersandp+dprod+dcredit+dinflation+dmoney+dspread+rterm, data=macro)
 summary(lm_msoft)
 linearHypothesis(lm_msoft, c("dprod=0","dcredit=0", "dspread=0", "dmoney=0"))
+
+lm_start<-lm(ermsoft~1,data=macro[-2,])
+
+summary(lm_start)
+step(lm_start, direction="forward",scope=formula(lm_msoft))
